@@ -60,7 +60,8 @@
 
 
 ; 1.6
-; It seems to work fine
+; Infinite recursion due to evaluation of sqrt-iter as one of the arguments due
+; to Applicative evaluation rather than normal expand and reduce evaluation
 
 ; 1.7
 
