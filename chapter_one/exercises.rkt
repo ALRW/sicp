@@ -114,16 +114,16 @@
 ; 3
 (define (+ a b)
   (if (= a 0)
-      b
-      (inc (+ (dec a) b))))
+    b
+    (inc (+ (dec a) b))))
 
 ; This is an iterative process .eg. for (+ 1 2)
 ; (+ 0 3)
 ; 3
 (define (+ a b)
   (if (= a 0)
-      b
-      (+ (dec a) (inc b))))
+    b
+    (+ (dec a) (inc b))))
 
 ; 1.10 Ackermann's function
 
@@ -141,4 +141,35 @@
 ;(define (g n) (A 1 n)) => 2^n
 ;(define (h n) (A 2 n)) => 2^2^n
 
+; 1.11
+; recursive
+(define (f n)
+  (if (< n 3)
+    n
+    (+ (f (- n 1))
+       (* 2 (f (- n 2)))
+       (* 3 (f (- n 3))))))
 
+;iterative
+(define (f2 n)
+  (f2-iter 2 1 0 n))
+
+(define (f2-iter a b c cnt)
+  (if (= cnt 0)
+    c
+    (f2-iter (+ a (* 2 b) (* 3 c))
+             a
+             b
+             (- cnt 1))))
+
+; 1.12
+
+; where i is not zero indexed
+(define (pascals row index)
+  (if (or (= row 1)
+          (= row 2)
+          (= index 1)
+          (= 0 (- row index)))
+    1
+    (+ (pascals (dec row) (dec index))
+       (pascals (dec row) index))))
