@@ -173,3 +173,21 @@
     1
     (+ (pascals (dec row) (dec index))
        (pascals (dec row) index))))
+
+;1.13
+;I'll come back to this when I'm better at Math :face_palm:
+
+;1.14
+; Θ(n) that is space and steps both grow linearly with n
+
+;1.15
+(define (cube x) (* x x x))
+(define (p x ) (- (* 3 x) (* 4 (cube x))))
+(define (sine angle step)
+  (display step) (display ": ") (display angle) (newline)
+   (if (not (> (abs angle) 0.1))
+       angle
+       (p (sine (/ angle 3.0) (+ step 1)))))
+
+(sine 12.15 1) ; 6
+;𝚯(log(a))
