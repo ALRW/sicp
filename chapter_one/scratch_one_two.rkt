@@ -64,3 +64,26 @@
 
 (define (even? n)
   (= (remainder n 2) 0))
+
+;Euclid's Algorithm
+
+(define (gcd a b)
+  (if (= b 0)
+    a
+    (gcd b (remainder a b))))
+
+; Finding prime numbers
+; Using Fermats theorem a number n is likely prime if
+; a is a random integral number < n
+; a^n modulo n == n
+; The more iterations confirm this the more likely the number is prime
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder 
+          (square (expmod base (/ exp 2) m))
+          m))
+        (else
+         (remainder 
+          (* base (expmod base (- exp 1) m))
+          m))))

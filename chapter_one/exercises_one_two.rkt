@@ -126,4 +126,31 @@
         (else (mult-iter a (- b 1) (+ p a)))))
 
 ;1.19
+; !learn maths
+; p' = p^2 + q^2
+; q' = 2qp + q^2
+(define (fib n)
+  (fib-iter 1 0 0 1 n))
 
+(define (fib-iter a b p q count)
+  (cond ((= count 0) 
+         b)
+        ((even? count)
+         (fib-iter a
+                   b
+                   (+ (square p) (square q))
+                   (+ (* 2 q p) (square q))
+                   (/ count 2)))
+        (else 
+         (fib-iter (+ (* b q) 
+                      (* a q) 
+                      (* a p))
+                   (+ (* b p) 
+                      (* a q))
+                   p
+                   q
+                   (- count 1)))))
+
+;1.20
+; 18 remainder operations are performed for normal order: exponential growth
+; 4 in the applicative order: logarithmic growth
