@@ -32,7 +32,7 @@
 
 ;(define (f n) (A 0 n)) => 2n
 ;(define (g n) (A 1 n)) => 2^n
-;(define (h n) (A 2 n)) => 2^2^n
+;(define (h n) (A 2 n)) => 2^h(n-1)
 
 ; 1.11
 ; recursive
@@ -180,11 +180,11 @@
 (define (prime? n)
   (= n (smallest-divisor n)))
 
-(define (timed-prime-test n)
-  (start-prime-test n (runtime)))
+(define (timed-prime-test n prime-test)
+  (start-prime-test n prime-test (runtime)))
 
-(define (start-prime-test n start-time)
-  (if (prime? n)
+(define (start-prime-test n prime-test start-time)
+  (if (prime-test n)
       (report-prime n (- (runtime)
                        start-time))))
 
@@ -194,10 +194,75 @@
   (display " *** ")
   (display elapsed-time))
 
-(define (search-for-primes start end)
-  (timed-prime-test start)
+(define (search-for-primes start end prime-test)
+  (timed-prime-test start prime-test)
   (cond ((= 0 (remainder start 2))
-         (search-for-primes (+ start 1) end))
+         (search-for-primes (+ start 1) end prime-test))
         ((> start end) (display "Finished"))
-        (else (search-for-primes (+ start 2) end))))
+        (else (search-for-primes (+ start 2) end prime-test))))
 
+(search-for-primes 10000 10010 prime?); 5ms
+(search-for-primes 100000 100010 prime?); 15ms
+(search-for-primes 1000000 1000100 prime?); 45ms
+(search-for-primes 10000000 10000100 prime?); 144ms
+; All of which seems to support the sqrt(10) growth in # of steps in the process
+
+;1.23
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (next n)
+  (if (= n 2)
+    3
+    (+ n 2)))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n)
+         n)
+        ((divides? test-divisor n)
+         test-divisor)
+        (else (find-divisor
+               n
+               (next test-divisor)))))
+
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+(search-for-primes 10000 10010 prime?); 4ms
+(search-for-primes 100000 100010 prime?); 12ms
+(search-for-primes 1000000 1000100 prime?); 35ms
+(search-for-primes 10000000 10000100 prime?); 112ms
+;this isn't quite a speedup of 200% because for each test we've added an extra
+;function call and additional if statement to resolve
+
+;1.24
+
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder
+          (square (expmod base (/ exp 2) m))
+          m))
+        (else
+         (remainder
+          (* base (expmod base (- exp 1) m))
+          m))))
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) true)
+        ((fermat-test n)
+         (fast-prime? n (- times 1)))
+        (else false)))
+
+(define (fp-5? n)
+  (fast-prime? n 5))
+
+(search-for-primes 10000 10010 fp-5?); 12ms
+(search-for-primes 100000 100010 fp-5?); 11ms
+(search-for-primes 1000000 1000100 fp-5?); 13ms
+(search-for-primes 10000000 10000100 fp-5?); 16ms
